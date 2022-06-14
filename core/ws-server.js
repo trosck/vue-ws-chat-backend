@@ -24,12 +24,6 @@ export class WSServer {
     await this.messages.connect()
 
     this.server.listen(port)
-    this.server.on('upgrade', (request, socket, head) => {
-      this.wss.handleUpgrade(request, socket, head, ws => {
-        this.wss.emit('connection', ws, request)
-      })
-    })
-
     this.wss.on('connection', ws => {
       ws.on('message', async data => {
         const { type, ...json } = JSON.parse(data)
