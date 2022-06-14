@@ -22,6 +22,9 @@
   "dependencies": {
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
+    "kurdish-nicknames": "^1.0.2",
+    "redis": "^4.1.0",
+    "txtgen": "^3.0.2",
     "ws": "^8.8.0"
   }
 }
