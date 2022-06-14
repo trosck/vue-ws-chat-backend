@@ -21,15 +21,14 @@ export class WSServer {
   }
 
   async bootstrap(port = 3001) {
-    this.server.listen(port)
+    await this.messages.connect()
 
-    server.on('upgrade', (request, socket, head) => {
+    this.server.listen(port)
+    this.server.on('upgrade', (request, socket, head) => {
       this.wss.handleUpgrade(request, socket, head, ws => {
         this.wss.emit('connection', ws, request)
       })
     })
-
-    await this.messages.connect()
 
     this.wss.on('connection', ws => {
       ws.on('message', async data => {
