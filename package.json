@@ -1,0 +1,27 @@
+{
+  "name": "vue-ws-chat-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "local": "cross-env MODE=local node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trosck/vue-ws-chat-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/trosck/vue-ws-chat-backend/issues"
+  },
+  "homepage": "https://github.com/trosck/vue-ws-chat-backend#readme",
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.1",
+    "ws": "^8.8.0"
+  }
+}
