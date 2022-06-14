@@ -10,10 +10,15 @@ function generateMessage() {
   }
 }
 
-export function generateFakeMessages(wss, interval = 5000) {
+export function generateFakeMessages(
+  wss,
+  onInterval = () => {},
+  interval = 5000
+) {
   setInterval(async () => {
-    const data = generateMessage()
+    await onInterval()
 
+    const data = generateMessage()
     await wss.messages.push(data)
 
     wss.instance.clients.forEach(client => {
