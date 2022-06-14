@@ -19,7 +19,7 @@ export function generateFakeMessages(
     await onInterval()
 
     const data = generateMessage()
-    await wss.messages.push(data)
+    await wsserver.messages.push(data)
 
     wsserver.wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
