@@ -1,67 +1,20 @@
-import WebSocket, { WebSocketServer } from 'ws'
-import { ListManager } from './core/redis.js'
-import { KurdishNicknames } from 'kurdish-nicknames'
-import { sentence } from 'txtgen'
+import fs from 'fs'
+import dotenv from 'dotenv'
+import { WSServer } from './core/ws-server'
+import { generateFakeMessages } from './core/publish-fake-messages'
 
-const wss = new WebSocketServer({ port: 3001 })
-const messagesList = new ListManager('messages')
-messagesList.connect()
+dotenv.config()
 
-setInterval(async () => {
+const cert = fs.readFileSync(process.env.WSS_CERT_PATH)
+const key = fs.readFileSync(process.env.WSS_KEY_PATH)
 
-  const length = await messagesList.length()
-  if (length >= 100) {
-    messagesList.lPop()
-  }
+const server = new WSServer(cert, key)
 
-  const { first_name, last_name } = KurdishNicknames.generate()
-  const data = {
-    username: `${first_name} ${last_name}`,
-    time: Date.now(),
-    value: sentence()
-  }
+;(async () => {
+  await server.bootstrap()
+  generateFakeMessages(
+    server,
+    async () => server.messages.leftPopIfMoreThen(100)
+  )
+})();
 
-  await messagesList.push(data)
-  wss.clients.forEach(client => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(
-        JSON.stringify({ type: 'push', data })
-      )
-    }
-  })
-}, 5000)
-
-wss.on('connection', ws => {
-
-  ws.on('message', async data => {
-
-    const { type, ...json } = JSON.parse(data)
-    switch(type) {
-
-      case 'get-all': {
-        const data = parseList(
-          await messagesList.getAll()
-        )
-
-        data.forEach((item, index) => item._id = index)
-        return ws.send(
-          JSON.stringify({ type, data })
-        )
-      }
-
-      case 'push': {
-        await messagesList.push(json)
-        return ws.send(
-          JSON.stringify({
-            type,
-            data: json
-          })
-        )
-      }
-    }
-  })
-})
-
-function parseList(list) {
-  return list.map(item => JSON.parse(item))
-}
