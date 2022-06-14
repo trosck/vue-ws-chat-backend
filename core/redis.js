@@ -68,4 +68,11 @@ export class ListManager extends RedisClient {
   length() {
     return this.client.lLen(this.name)
   }
+
+  async leftPopIfMoreThen(number) {
+    const length = await this.length()
+    if (length > number) {
+      this.lPop()
+    }
+  }
 }
