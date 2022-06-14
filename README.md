@@ -1,6 +1,6 @@
 # vue-ws-chat-backend
 
-Backend for [vue-ws-chat](https://github.com/trosck/vue-ws-chat)
+Backend ws with tls for [vue-ws-chat](https://github.com/trosck/vue-ws-chat)
 
 ## message object 
 
