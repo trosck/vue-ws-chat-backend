@@ -1,5 +1,5 @@
 import https from 'https'
-import { WebSocketServer } from 'ws'
+import WebSocket, { WebSocketServer } from 'ws'
 import { ListManager } from './redis.js'
 
 /**
@@ -27,26 +27,34 @@ export class WSServer {
     this.wss.on('connection', ws => {
       ws.on('message', async data => {
         const { type, ...json } = JSON.parse(data)
-        this.handlers[type]?.(ws, type, data)
+        this.handlers[type]?.(ws, type, json)
       })
     })
   }
 
   async getAllMessages(socket, type) {
-    const data = parseList(
-      await messagesList.getAll()
+    const parsedList = parseList(
+      await this.messages.getAll()
     )
 
-    data.forEach((item, index) => item._id = index)
+    parsedList.forEach((item, index) => item._id = index)
     return socket.send(
-      JSON.stringify({ type, data })
+      JSON.stringify({ type, data: parsedList })
     )
   }
 
   async publishMessage(socket, type, data) {
-    await messagesList.push(data)
-    return socket.send(
-      JSON.stringify({ type, data })
-    )
+    await this.messages.push(data)
+    return this.sendToAllAvailableClients({ type, data })
+  }
+
+  async sendToAllAvailableClients(data) {
+    return this.wss.clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(
+          JSON.stringify(data)
+        )
+      }
+    })
   }
 }
