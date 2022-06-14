@@ -11,7 +11,7 @@ function generateMessage() {
 }
 
 export function generateFakeMessages(
-  wss,
+  wsserver,
   onInterval = () => {},
   interval = 5000
 ) {
@@ -21,7 +21,7 @@ export function generateFakeMessages(
     const data = generateMessage()
     await wss.messages.push(data)
 
-    wss.instance.clients.forEach(client => {
+    wsserver.wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(
           JSON.stringify({ type: 'push', data })

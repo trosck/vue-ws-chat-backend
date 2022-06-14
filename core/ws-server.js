@@ -11,8 +11,8 @@ function parseList(list) {
 
 export class WSServer {
   constructor(cert, key) {
-    const server = new https.createServer({ cert, key })
-    this.instance = new WebSocketServer({ server })
+    this.server = new https.createServer({ cert, key })
+    this.wss = new WebSocketServer({ server: this.server })
     this.messages = new ListManager('messages')
     this.handlers = {
       'get-all': this.getAllMessages.bind(this),
@@ -21,10 +21,10 @@ export class WSServer {
   }
 
   async bootstrap(port = 3001) {
-    server.listen(port)
+    this.server.listen(port)
     await this.messages.connect()
 
-    this.instance.on('connection', ws => {
+    this.wss.on('connection', ws => {
       ws.on('message', async data => {
         const { type, ...json } = JSON.parse(data)
         this.handlers[type]?.(ws, type, data)
@@ -32,7 +32,7 @@ export class WSServer {
     })
   }
 
-  async getAllMessages(socket, type, data) {
+  async getAllMessages(socket, type) {
     const data = parseList(
       await messagesList.getAll()
     )

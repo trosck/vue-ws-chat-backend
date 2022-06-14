@@ -1,7 +1,7 @@
 import fs from 'fs'
 import dotenv from 'dotenv'
-import { WSServer } from './core/ws-server'
-import { generateFakeMessages } from './core/publish-fake-messages'
+import { WSServer } from './core/ws-server.js'
+import { generateFakeMessages } from './core/publish-fake-messages.js'
 
 dotenv.config()
 
