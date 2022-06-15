@@ -6,6 +6,12 @@ Backend ws with tls for [vue-ws-chat](https://github.com/trosck/vue-ws-chat)
 copy `.env.example` and paste with name `.env`
 
 ```bash
+cp .env.example .env
+```
+
+run project
+
+```bash
 npm i
 ```
 
