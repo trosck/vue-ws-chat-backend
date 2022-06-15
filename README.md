@@ -2,6 +2,17 @@
 
 Backend ws with tls for [vue-ws-chat](https://github.com/trosck/vue-ws-chat)
 
+## start project
+copy `.env.example` and paste with name `.env`
+
+```bash
+npm i
+```
+
+```bash
+npm run start
+```
+
 ## message object 
 
 ```javascript
