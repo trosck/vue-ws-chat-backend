@@ -1,6 +1,8 @@
-import { createClient } from 'redis'
+import { RedisClientType, createClient } from 'redis'
 
 class RedisClient {
+  client: RedisClientType
+
   constructor() {
     this.client = createClient()
   }
@@ -21,6 +23,8 @@ class RedisClient {
 
   async get(key) {
     const value = await this.client.get(JSON.stringify(key))
+
+    if (!value) return value
 
     try {
       return JSON.parse(value)
@@ -44,13 +48,16 @@ class RedisClient {
 }
 
 export class ListManager extends RedisClient {
+  // list name
+  name: string
+
   constructor(name) {
     super()
     this.name = name
   }
 
-  lPop(count = 1) {
-    return this.client.lPop(this.name, count)
+  lPop() {
+    return this.client.lPop(this.name)
   }
 
   push(item) {

@@ -1,17 +1,50 @@
 import https from 'https'
 import WebSocket, { WebSocketServer } from 'ws'
-import { ListManager } from './redis.js'
+import { ListManager } from './redis-client.js'
 
 /**
  * parse redis list(string[])
  */
-function parseList(list) {
+function parseList(list: string[]) {
   return list.map(item => JSON.parse(item))
 }
 
-export class WSServer {
-  constructor(cert, key) {
-    this.server = new https.createServer({ cert, key })
+export type ApiEndpointsTypes = 'get-all' | 'push'
+export type EndpointFunctionType = (
+  socket: WebSocket,
+  type: ApiEndpointsTypes,
+  data: any
+) => void
+
+export interface IWSServer {
+  server: https.Server
+  wss: WebSocketServer
+  messages: ListManager
+  // api endpoints handlers
+  handlers: {
+    [key: string]: EndpointFunctionType
+  }
+
+  // start server on specific port(default = 3001)
+  bootstrap(port: number): void
+
+  getAllMessages: EndpointFunctionType
+  publishMessage: EndpointFunctionType
+
+  sendToAllAvailableClients(data: any): any
+}
+
+export class WSServer implements IWSServer {
+  server: https.Server
+  wss: WebSocketServer
+  messages: ListManager
+  // api endpoints handlers
+  handlers: {
+    [key: string]: EndpointFunctionType
+  }
+
+  constructor(cert: string, key: string) {
+    this.server = https.createServer({ cert, key })
     this.wss = new WebSocketServer({ server: this.server })
     this.messages = new ListManager('messages')
     this.handlers = {

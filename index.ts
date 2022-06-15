@@ -5,10 +5,16 @@ import { generateFakeMessages } from './core/publish-fake-messages.js'
 
 dotenv.config()
 
-const cert = fs.readFileSync(process.env.WSS_CERT_PATH)
-const key = fs.readFileSync(process.env.WSS_KEY_PATH)
-
-const server = new WSServer(cert, key)
+const server = new WSServer(
+  fs.readFileSync(
+    process.env.WSS_CERT_PATH ?? '',
+    { encoding: 'utf-8' }
+  ),
+  fs.readFileSync(
+    process.env.WSS_KEY_PATH ?? '',
+    { encoding: 'utf-8' }
+  )
+)
 
 ;(async () => {
   await server.bootstrap()
