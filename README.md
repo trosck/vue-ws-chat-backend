@@ -9,11 +9,13 @@ copy `.env.example` and paste with name `.env`
 cp .env.example .env
 ```
 
-run project
+install dependencies
 
 ```bash
 npm i
 ```
+
+run project
 
 ```bash
 npm run start
